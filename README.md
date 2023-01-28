@@ -2,7 +2,4 @@
 
 # IoT-Watering-System
 Inspiration:
-Plants are always a part of my daily life. For example, they've reduced indoor air pollution, enhance our mood, better decoration, etc. However in the past almost every plant I've been maintaining, either dies from being overwatered, or a shortage of water. So today I decided to build a smart IoT watering system.
-
-How it works:
-This device briefly includes a solenoid valve - (to control the flow of water), a capacitive soil sensor to read the moisture of the soil, bme280 to read surrounding environment, which sends data to Blynk.
+Watering plants have always been a part of my mum’s daily life since I could remember. However, she had always been complaining they were too difficult to maintain as they always ended up either being overwatered or underwatered. Last year in my Year 6 Science class, I learnt that plants are very individual and different plants require different level of moisture in growth, so I decided to build this ‘smart’ IoT watering system. It has been working so well in helping my mum to maintain her plants both indoor and outdoor.
