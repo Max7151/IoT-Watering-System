@@ -125,7 +125,7 @@ void checkmoisture() {
 
   soilmoisturepercent = map(adc0, AirValue, WaterValue, 0, 100);
 
-  Serial.println(adc3);
+  Serial.println(adc0);
 
   if (soilmoisturepercent >= 100) {
     Blynk.virtualWrite(V2, 100);
