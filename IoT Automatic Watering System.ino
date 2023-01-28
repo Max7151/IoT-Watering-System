@@ -1,5 +1,5 @@
-#define BLYNK_TEMPLATE_ID "TMPLyd1iRCv6"
-#define BLYNK_DEVICE_NAME "Auto Watering System"
+#define BLYNK_TEMPLATE_ID "Your Template ID"
+#define BLYNK_DEVICE_NAME "Your Device Name"
 
 #define BLYNK_PRINT Serial
 
@@ -20,15 +20,15 @@ BlynkTimer timer;
 Adafruit_BME280 bme(BME_CS);  // hardware SPI
 
 //Blynk Details
-char auth[] = "QxR49PaVkloz1LzqfearncQgIyHg-xPk";  //Auth Token
+char auth[] = "Your Auth";  //Auth Token
 
 // Set password to "" for open networks.
-char ssid[] = "WiFi-BF4458_2GEXT";  //Ssid
-char pass[] = "TjpGKs8RZBD8AWn9";   //Pass TjpGKs8RZBD8AWn9
+char ssid[] = "Your SSID";  //Ssid
+char pass[] = "Your Password";   //Pass 
 
 //Soil Moisture Sensor Calibration
 const int AirValue = 12240;   //Air Value for Moisture Sensor
-const int WaterValue = 5570;  //Water Value for Moisture Sensor 5110, 5510
+const int WaterValue = 5570;  //Water Value for Moisture Sensor
 
 //relay pin (for soloeid water valve)
 int relay = 26;
