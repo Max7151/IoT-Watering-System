@@ -1,5 +1,5 @@
-#define BLYNK_TEMPLATE_ID "REPLACE WITH TEMPLATE ID"//Template ID
-#define BLYNK_DEVICE_NAME "REPLACE WITH DEVICE NAME"//Device Name
+#define BLYNK_TEMPLATE_ID "TMPLyd1iRCv6"
+#define BLYNK_DEVICE_NAME "Auto Watering System"
 
 #define BLYNK_PRINT Serial
 
@@ -10,9 +10,9 @@
 #include <Adafruit_BME280.h>
 #include <SPI.h>
 #include <Wire.h>
-#include <Adafruit_ADS1X15.h>
+#include <ADS1X15.h>
 
-Adafruit_ADS1115 ads;
+ADS1115 ADS(0x48);
 BlynkTimer timer;
 
 //BME280 Connections
@@ -20,15 +20,15 @@ BlynkTimer timer;
 Adafruit_BME280 bme(BME_CS);  // hardware SPI
 
 //Blynk Details
-char auth[] = "REPLACE WITH AUTH TOKEN";//Auth Token
+char auth[] = "QxR49PaVkloz1LzqfearncQgIyHg-xPk";  //Auth Token
 
 // Set password to "" for open networks.
-char ssid[] = "REPLACE WITH WIFI SSID";//Ssid
-char pass[] = "REPLACE WITH WIFI PASSWORD";/Pass
+char ssid[] = "WiFi-BF4458_2GEXT";  //Ssid
+char pass[] = "TjpGKs8RZBD8AWn9";   //Pass TjpGKs8RZBD8AWn9
 
 //Soil Moisture Sensor Calibration
-const int AirValue = REPLACE WITH AIR VALUE;//Air Value for Moisture Sensor
-const int WaterValue = REPLACE WITH WATER VALUE;//Water Value for Moisture Sensor
+const int AirValue = 12240;   //Air Value for Moisture Sensor
+const int WaterValue = 5570;  //Water Value for Moisture Sensor 5110, 5510
 
 //relay pin (for soloeid water valve)
 int relay = 26;
@@ -41,15 +41,33 @@ int soilmoisturepercent;
 
 int SoilTuningPercent;
 
-
-//Create a 16Bit variable for ADS1115
-int16_t adc0;
+bool watering = false;
 
 BLYNK_WRITE(V4) {
   SoilTuningPercent = param.asInt();
   Serial.println();
   Serial.println("Soil Tuning Set To: ");
   Serial.print(SoilTuningPercent);
+}
+
+void setup() {
+  // Debug console
+  Serial.begin(115200);
+  SPI.begin();
+  ADS.begin();
+  bme.begin();
+  Blynk.begin(auth, ssid, pass);
+
+  pinMode(relay, OUTPUT);
+  //events
+  timer.setInterval(1000L, bme280);
+  timer.setInterval(1000L, checkmoisture);
+}
+
+void loop() {
+  checkwatering();
+  Blynk.run();
+  timer.run();
 }
 
 void bme280() {
@@ -90,19 +108,32 @@ void completewatering() {
 }
 
 //Watering
-void watering() {
-  digitalWrite(relay, HIGH);
-  delay(10000);
-  digitalWrite(relay, LOW);
-  delay(100);
-  completewatering();
+void checkwatering() {
+  if (watering == true) {
+    digitalWrite(relay, HIGH);
+  }
+  if (soilmoisturepercent > SoilTuningPercent - 5) {
+    watering == false;
+    digitalWrite(relay, LOW);
+    completewatering();
+  }
 }
 
 void checkmoisture() {
-  delay(1000);
-  adc0 = ads.readADC_SingleEnded(0);
+  ADS.setGain(0);
+  int16_t adc0 = ADS.readADC(0);
 
   soilmoisturepercent = map(adc0, AirValue, WaterValue, 0, 100);
+
+  Serial.println(adc3);
+
+  if (soilmoisturepercent >= 100) {
+    Blynk.virtualWrite(V2, 100);
+  } else if (soilmoisturepercent <= 0) {
+    Blynk.virtualWrite(V2, 0);
+  } else if (soilmoisturepercent > 0 && soilmoisturepercent < 100) {
+    Blynk.virtualWrite(V2, soilmoisturepercent);
+  }
 
   if (soilmoisturepercent >= 100) {
     Serial.println();
@@ -116,42 +147,11 @@ void checkmoisture() {
     Serial.print(soilmoisturepercent);
     Serial.print("%");
   }
-  if (soilmoisturepercent < SoilTuningPercent - 15) {
+  if (soilmoisturepercent < SoilTuningPercent - 10) {
     water_count++;
   }
   if (water_count == 5) {  //To wait for the water to go through the pot.
-    watering();
+    watering = true;
     water_count = 0;
   }
-}
-
-void sendcheckmoisture() {
-  if (soilmoisturepercent >= 100) {
-    Blynk.virtualWrite(V2, 100);
-  } else if (soilmoisturepercent <= 0) {
-    Blynk.virtualWrite(V2, 0);
-  } else if (soilmoisturepercent > 0 && soilmoisturepercent < 100) {
-    Blynk.virtualWrite(V2, soilmoisturepercent);
-  }
-}
-
-void setup() {
-  // Debug console
-  Serial.begin(115200);
-  SPI.begin();
-  ads.begin();
-  bme.begin();
-  Blynk.begin(auth, ssid, pass);
-
-  pinMode(relay, OUTPUT);
-  //events
-  timer.setInterval(1000L, bme280);
-  timer.setInterval(1000L, sendcheckmoisture);
-}
-
-void loop() {
-
-  checkmoisture();
-  Blynk.run();
-  timer.run();
 }
