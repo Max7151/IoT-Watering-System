@@ -1,4 +1,4 @@
-![IMG_20230128_185625](https://user-images.githubusercontent.com/123163898/215354773-f83c1640-93fb-4b75-bdb9-7e0039321d69.jpg)
+![IMG_20230128_183850_3](https://user-images.githubusercontent.com/123163898/215354840-9fab27da-dee0-4fd1-b02b-19f291506ab3.jpg)
 
 # IoT-Watering-System
 Inspiration:
